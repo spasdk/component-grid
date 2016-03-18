@@ -71,6 +71,8 @@ function Grid ( config ) {
     // current execution context
     //var self = this;
 
+    console.assert(typeof this === 'object', 'must be constructed via new');
+    
     // sanitize
     config = config || {};
 
