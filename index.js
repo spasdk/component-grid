@@ -72,7 +72,7 @@ function Grid ( config ) {
     //var self = this;
 
     console.assert(typeof this === 'object', 'must be constructed via new');
-    
+
     // sanitize
     config = config || {};
 
@@ -134,7 +134,7 @@ function Grid ( config ) {
     this.focusY = 0;
 
     // set default className if classList property empty or undefined
-    config.className = 'grid ' + (config.className || '');
+    //config.className = 'grid ' + (config.className || '');
 
     // parent constructor call
     Component.call(this, config);
@@ -169,6 +169,9 @@ function Grid ( config ) {
 // inheritance
 Grid.prototype = Object.create(Component.prototype);
 Grid.prototype.constructor = Grid;
+
+// set component name
+Grid.prototype.name = 'spa-component-grid';
 
 
 /**
@@ -733,7 +736,7 @@ Grid.prototype.move = function ( direction ) {
                     overflow = true;
                 }
                 break;
-            
+
             // left
             case 37:
                 if ( x > 0 ) {
