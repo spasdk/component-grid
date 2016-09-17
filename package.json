@@ -12,7 +12,7 @@
     },
     "scripts": {
         "sass": "node-sass --indent-width 4 --include-path ../../.. sass/develop.scss css/develop.css && node-sass --indent-width 4 --include-path ../../.. sass/release.scss css/release.css",
-        "lint": "eslint *.js",
+        "lint": "eslint .",
         "test": "npm run lint",
         "jsdoc": "jsdoc --destination doc *.js readme.md"
     },
@@ -20,8 +20,8 @@
         "spa-component": "spasdk/component"
     },
     "devDependencies": {
-        "spa-eslint-config": "spasdk/eslint-config",
-        "eslint": "2.*.*"
+        "eslint": "2.*.*",
+        "spa-eslint-config": "spasdk/eslint-config"
     },
     "keywords": [
         "spa",
