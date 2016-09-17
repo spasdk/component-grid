@@ -13,13 +13,15 @@
     "scripts": {
         "sass": "node-sass --indent-width 4 --include-path ../../.. sass/develop.scss css/develop.css && node-sass --indent-width 4 --include-path ../../.. sass/release.scss css/release.css",
         "lint": "eslint *.js",
+        "test": "npm run lint",
         "jsdoc": "jsdoc --destination doc *.js readme.md"
     },
     "dependencies": {
         "spa-component": "spasdk/component"
     },
     "devDependencies": {
-        "spa-eslint-config": "spasdk/eslint-config"
+        "spa-eslint-config": "spasdk/eslint-config",
+        "eslint": "2.*.*"
     },
     "keywords": [
         "spa",
