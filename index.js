@@ -795,7 +795,7 @@ Grid.prototype.move = function ( direction ) {
 
     if ( overflow ) {
         //
-        if (this.provider) {
+        if ( this.provider ) {
             newData = this.provider.get(direction, function ( error, data ) {
                 var  idxY, idxX;
 
