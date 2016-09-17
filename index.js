@@ -293,7 +293,7 @@ Grid.prototype.defaultEvents = {
  * @return {Array[]} reworked incoming data
  */
 function normalize ( data ) {
-    var i, j, item;
+    var idxY, idxX, item;
 
     if ( DEVELOP ) {
         if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
@@ -301,23 +301,24 @@ function normalize ( data ) {
     }
 
     // rows
-    for ( i = 0; i < data.length; i++ ) {
+    for ( idxY = 0; idxY < data.length; idxY++ ) {
         // cols
-        for ( j = 0; j < data[i].length; j++ ) {
+        for ( idxX = 0; idxX < data[idxY].length; idxX++ ) {
             // cell value
-            item = data[i][j];
+            item = data[idxY][idxX];
+
             // primitive value
-            if ( typeof item !== 'object' ) {
-                // wrap with defaults
-                item = data[i][j] = {
-                    value: data[i][j],
-                    colSpan: 1,
-                    rowSpan: 1
-                };
-            } else {
+            if ( typeof item === 'object' ) {
                 // always at least one row/col
                 item.colSpan = item.colSpan || 1;
                 item.rowSpan = item.rowSpan || 1;
+            } else {
+                // wrap with defaults
+                item = data[idxY][idxX] = {
+                    value: data[idxY][idxX],
+                    colSpan: 1,
+                    rowSpan: 1
+                };
             }
 
             if ( DEVELOP ) {
@@ -327,7 +328,9 @@ function normalize ( data ) {
                 if ( item.colSpan <= 0 ) { throw new Error(__filename + ': item.colSpan should be positive'); }
                 if ( item.rowSpan <= 0 ) { throw new Error(__filename + ': item.rowSpan should be positive'); }
                 if ( ('focus' in item) && Boolean(item.focus) !== item.focus ) { throw new Error(__filename + ': item.focus must be boolean'); }
-                if ( ('disable' in item) && Boolean(item.disable) !== item.disable ) { throw new Error(__filename + ': item.disable must be boolean'); }
+                if ( ('disable' in item) && Boolean(item.disable) !== item.disable ) {
+                    throw new Error(__filename + ': item.disable must be boolean');
+                }
             }
         }
     }
@@ -340,14 +343,14 @@ function normalize ( data ) {
  * Fill the given rectangle area with value.
  *
  * @param {Array[]} map link to navigation map
- * @param {number} x current horizontal position
- * @param {number} y current vertical position
+ * @param {number} posX current horizontal position
+ * @param {number} posY current vertical position
  * @param {number} dX amount of horizontal cell to fill
  * @param {number} dY amount of vertical cell to fill
  * @param {*} value filling data
  */
-function fill ( map, x, y, dX, dY, value ) {
-    var i, j;
+function fill ( map, posX, posY, dX, dY, value ) {
+    var idxY, idxX;
 
     if ( DEVELOP ) {
         if ( arguments.length !== 6 ) { throw new Error(__filename + ': wrong arguments number'); }
@@ -355,24 +358,24 @@ function fill ( map, x, y, dX, dY, value ) {
     }
 
     // rows
-    for ( i = y; i < y + dY; i++ ) {
+    for ( idxY = posY; idxY < posY + dY; idxY++ ) {
         // expand map rows
-        if ( map.length < i + 1 ) { map.push([]); }
+        if ( map.length < idxY + 1 ) { map.push([]); }
 
         // compensate long columns from previous rows
-        while ( map[i][x] !== undefined ) {
-            x++;
+        while ( map[idxY][posX] !== undefined ) {
+            posX++;
         }
 
         // cols
-        for ( j = x; j < x + dX; j++ ) {
+        for ( idxX = posX; idxX < posX + dX; idxX++ ) {
             // expand map row cols
-            if ( map[i].length < j + 1 ) { map[i].push(); }
+            if ( map[idxY].length < idxX + 1 ) { map[idxY].push(); }
             // fill
-            map[i][j] = value;
+            map[idxY][idxX] = value;
             // apply coordinates for future mouse clicks
-            if ( value.x === undefined ) { value.x = j; }
-            if ( value.y === undefined ) { value.y = i; }
+            if ( value.x === undefined ) { value.x = idxX; }
+            if ( value.y === undefined ) { value.y = idxY; }
         }
     }
 }
@@ -386,7 +389,7 @@ function fill ( map, x, y, dX, dY, value ) {
  */
 function map ( data ) {
     var result = [],
-        i, j, item;
+        idxY, idxX, item;
 
     if ( DEVELOP ) {
         if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
@@ -394,13 +397,13 @@ function map ( data ) {
     }
 
     // rows
-    for ( i = 0; i < data.length; i++ ) {
+    for ( idxY = 0; idxY < data.length; idxY++ ) {
         // cols
-        for ( j = 0; j < data[i].length; j++ ) {
+        for ( idxX = 0; idxX < data[idxY].length; idxX++ ) {
             // cell value
-            item = data[i][j];
+            item = data[idxY][idxX];
             // process a cell
-            fill(result, j, i, item.colSpan, item.rowSpan, item.$item);
+            fill(result, idxX, idxY, item.colSpan, item.rowSpan, item.$item);
             // clear redundant info
             delete item.$item;
         }
@@ -418,7 +421,7 @@ function map ( data ) {
 Grid.prototype.init = function ( config ) {
     var self = this,
         draw = false,
-        i, j,
+        idxY, idxX,
         $row, $item, $tbody, $focusItem,
         itemData, newData,
         /**
@@ -485,19 +488,19 @@ Grid.prototype.init = function ( config ) {
             self.data = normalize(self.data);
 
             // rows
-            for ( i = 0; i < self.data.length; i++ ) {
+            for ( idxY = 0; idxY < self.data.length; idxY++ ) {
                 // dom
                 $row = $tbody.insertRow();
 
                 // cols
-                for ( j = 0; j < self.data[i].length; j++ ) {
+                for ( idxX = 0; idxX < self.data[idxY].length; idxX++ ) {
                     // dom
                     $item = $row.insertCell(-1);
                     // additional params
                     $item.className = 'item';
 
                     // shortcut
-                    itemData = self.data[i][j];
+                    itemData = self.data[idxY][idxX];
 
                     // for map
                     itemData.$item = $item;
@@ -562,7 +565,9 @@ Grid.prototype.init = function ( config ) {
     if ( DEVELOP ) {
         if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
         if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-        if ( config.data && (!Array.isArray(config.data) || !Array.isArray(config.data[0])) ) { throw new Error(__filename + ': wrong config.data type'); }
+        if ( config.data && (!Array.isArray(config.data) || !Array.isArray(config.data[0])) ) {
+            throw new Error(__filename + ': wrong config.data type');
+        }
         if ( config.render && typeof config.render !== 'function' ) { throw new Error(__filename + ': wrong config.render type'); }
     }
 
@@ -639,15 +644,16 @@ Grid.prototype.init = function ( config ) {
  */
 Grid.prototype.defaultTranslate = function ( data ) {
     var result = [],
-        i, j, arr;
+        idxY, idxX, arr;
 
-    for ( i = 0; i < this.sizeY; i++ ) {
+    for ( idxY = 0; idxY < this.sizeY; idxY++ ) {
         arr = [];
-        for ( j = 0; j < this.sizeX; j++ ) {
-            arr[j] = data[i * this.sizeX + j];
+        for ( idxX = 0; idxX < this.sizeX; idxX++ ) {
+            arr[idxX] = data[idxY * this.sizeX + idxX];
         }
-        result[i] = arr;
+        result[idxY] = arr;
     }
+
     return result;
 };
 
@@ -673,12 +679,12 @@ Grid.prototype.translate = Grid.prototype.defaultTranslate;
  * @fires module:stb/ui/grid~Grid#data:error
  */
 Grid.prototype.move = function ( direction ) {
-    var x        = this.focusX,
-        y        = this.focusY,
+    var focusX   = this.focusX,
+        focusY   = this.focusY,
         move     = true,
         overflow = false,
         cycle    = false,
-        newData, i, j;
+        newData;
 
     if ( DEVELOP ) {
         if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
@@ -691,13 +697,13 @@ Grid.prototype.move = function ( direction ) {
         switch ( direction ) {
             // up
             case 38:
-                if ( y > 0 ) {
+                if ( focusY > 0 ) {
                     // can go one step up
-                    y--;
+                    focusY--;
                 } else {
                     if ( this.cycleY ) {
                         // jump to the last row
-                        y = this.map.length - 1;
+                        focusY = this.map.length - 1;
                         cycle = true;
                     }
                     // grid edge
@@ -707,13 +713,13 @@ Grid.prototype.move = function ( direction ) {
 
             // down
             case 40:
-                if ( y < this.map.length - 1 ) {
+                if ( focusY < this.map.length - 1 ) {
                     // can go one step down
-                    y++;
+                    focusY++;
                 } else {
                     if ( this.cycleY ) {
                         // jump to the first row
-                        y = 0;
+                        focusY = 0;
                         cycle = true;
                     }
                     // grid edge
@@ -723,13 +729,13 @@ Grid.prototype.move = function ( direction ) {
 
             // right
             case 39:
-                if ( x < this.map[y].length - 1 ) {
+                if ( focusX < this.map[focusY].length - 1 ) {
                     // can go one step right
-                    x++;
+                    focusX++;
                 } else {
                     if ( this.cycleX ) {
                         // jump to the first column
-                        x = 0;
+                        focusX = 0;
                         cycle = true;
                     }
                     // grid edge
@@ -739,13 +745,13 @@ Grid.prototype.move = function ( direction ) {
 
             // left
             case 37:
-                if ( x > 0 ) {
+                if ( focusX > 0 ) {
                     // can go one step left
-                    x--;
+                    focusX--;
                 } else {
                     if ( this.cycleX ) {
                         // jump to the last column
-                        x = this.map[y].length - 1;
+                        focusX = this.map[focusY].length - 1;
                         cycle = true;
                     }
                     // grid edge
@@ -756,13 +762,13 @@ Grid.prototype.move = function ( direction ) {
         }
 
         // full cycle - has come to the start point
-        if ( x === this.focusX && y === this.focusY ) {
+        if ( focusX === this.focusX && focusY === this.focusY ) {
             // full stop
             move = false;
         }
 
         // focus item has changed and it's not disabled
-        if ( this.map[y][x] !== this.map[this.focusY][this.focusX] && this.map[y][x].data.disable !== true ) {
+        if ( this.map[focusY][focusX] !== this.map[this.focusY][this.focusX] && this.map[focusY][focusX].data.disable !== true ) {
             // full stop
             move = false;
         }
@@ -772,25 +778,27 @@ Grid.prototype.move = function ( direction ) {
             // full stop
             move = false;
             // but it's disabled so need to go back
-            if ( this.map[y][x].data.disable === true ) {
+            if ( this.map[focusY][focusX].data.disable === true ) {
                 // return to the start point
-                x = this.focusX;
-                y = this.focusY;
+                focusX = this.focusX;
+                focusY = this.focusY;
             }
         }
     }
 
-    this.focusItem(this.map[y][x]);
+    this.focusItem(this.map[focusY][focusX]);
 
     // correct coordinates
     // focusItem set approximate values
-    this.focusX = x;
-    this.focusY = y;
+    this.focusX = focusX;
+    this.focusY = focusY;
 
     if ( overflow ) {
         //
         if (this.provider) {
             newData = this.provider.get(direction, function ( error, data ) {
+                var  idxY, idxX;
+
                 if ( error ) {
 
                     if ( self.events['data:error'] ) {
@@ -800,15 +808,16 @@ Grid.prototype.move = function ( direction ) {
                          * @event module:stb/ui/grid~Grid#data:error
                          */
                         self.emit('data:error', error);
-                        return false;
+
+                        return;
                     }
                 }
 
                 if ( data ) {
                     self.data = self.translate(data);
-                    for ( i = 0; i < self.sizeY - 1; i++ ) {
-                        for ( j = 0; j < self.sizeX; j++ ) {
-                            self.renderItem(self.map[i][j], self.data[i][j]);
+                    for ( idxY = 0; idxY < self.sizeY - 1; idxY++ ) {
+                        for ( idxX = 0; idxX < self.sizeX; idxX++ ) {
+                            self.renderItem(self.map[idxY][idxX], self.data[idxY][idxX]);
                         }
                     }
 
@@ -853,8 +862,8 @@ Grid.prototype.move = function ( direction ) {
     }
 
     // report
-    debug.info(this.focusX + ' : ' + x, 'X old/new');
-    debug.info(this.focusY + ' : ' + y, 'Y old/new');
+    debug.info(this.focusX + ' : ' + focusX, 'X old/new');
+    debug.info(this.focusY + ' : ' + focusY, 'Y old/new');
     debug.info(cycle, 'cycle');
     debug.info(overflow, 'overflow');
 
