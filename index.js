@@ -7,7 +7,8 @@
 
 'use strict';
 
-var Component = require('spa-component');
+var Component = require('spa-component'),
+    keys      = require('spa-keys');
 
 
 /**
@@ -155,12 +156,12 @@ function Grid ( config ) {
     //this.$body.addEventListener('mousewheel', function ( event ) {
     //    // scrolling by Y axis
     //    if ( event.wheelDeltaY ) {
-    //        self.move(event.wheelDeltaY > 0 ? 38 : 40);
+    //        self.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
     //    }
     //
     //    // scrolling by X axis
     //    if ( event.wheelDeltaX ) {
-    //        self.move(event.wheelDeltaX > 0 ? 37 : 39);
+    //        self.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
     //    }
     //});
 }
@@ -214,32 +215,30 @@ Grid.prototype.defaultEvents = {
     mousewheel: function ( event ) {
         // scrolling by Y axis
         if ( event.wheelDeltaY ) {
-            // up or down
-            this.move(event.wheelDeltaY > 0 ? 38 : 40);
+            this.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
         }
 
         // scrolling by X axis
         if ( event.wheelDeltaX ) {
-            // left or right
-            this.move(event.wheelDeltaX > 0 ? 37 : 39);
+            this.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
         }
     },
 
     /**
      * Default method to handle keyboard keydown events.
      *
-     * @param {Event} event generated event
+     * @param {Object} event generated event
      */
     keydown: function ( event ) {
-        switch ( event.keyCode ) {
-            case 38:  // up
-            case 40:  // down
-            case 39:  // right
-            case 37:  // left
+        switch ( event.code ) {
+            case keys.up:
+            case keys.down:
+            case keys.right:
+            case keys.left:
                 // cursor move only on arrow keys
-                this.move(event.keyCode);
+                this.move(event.code);
                 break;
-            case 13:  // ok
+            case keys.enter:
                 // there are some listeners
                 if ( this.events['click:item'] ) {
                     // notify listeners
@@ -258,14 +257,14 @@ Grid.prototype.defaultEvents = {
  */
 //Grid.prototype.navigateDefault = function ( event ) {
 //    switch ( event.code ) {
-//        case 38:
-//        case 40:
-//        case 39:
-//        case 37:
+//        case keys.up:
+//        case keys.down:
+//        case keys.right:
+//        case keys.left:
 //            // cursor move only on arrow keys
 //            this.move(event.code);
 //            break;
-//        case 13:
+//        case keys.ok:
 //            // there are some listeners
 //            if ( this.events['click:item'] ) {
 //                // notify listeners
@@ -695,8 +694,7 @@ Grid.prototype.move = function ( direction ) {
     while ( move ) {
         // arrow keys
         switch ( direction ) {
-            // up
-            case 38:
+            case keys.up:
                 if ( focusY > 0 ) {
                     // can go one step up
                     focusY--;
@@ -711,8 +709,7 @@ Grid.prototype.move = function ( direction ) {
                 }
                 break;
 
-            // down
-            case 40:
+            case keys.down:
                 if ( focusY < this.map.length - 1 ) {
                     // can go one step down
                     focusY++;
@@ -727,8 +724,7 @@ Grid.prototype.move = function ( direction ) {
                 }
                 break;
 
-            // right
-            case 39:
+            case keys.right:
                 if ( focusX < this.map[focusY].length - 1 ) {
                     // can go one step right
                     focusX++;
@@ -743,8 +739,7 @@ Grid.prototype.move = function ( direction ) {
                 }
                 break;
 
-            // left
-            case 37:
+            case keys.left:
                 if ( focusX > 0 ) {
                     // can go one step left
                     focusX--;
