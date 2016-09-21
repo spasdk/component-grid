@@ -253,7 +253,7 @@ Grid.prototype.defaultEvents = {
 /**
  * Default method to move focus according to pressed keys.
  *
- * @param {Event} event generated event source of movement
+ * @param {Object} event generated event source of movement
  */
 //Grid.prototype.navigateDefault = function ( event ) {
 //    switch ( event.code ) {
