@@ -18,7 +18,7 @@
     },
     "dependencies": {
         "spa-component": "1.*.*",
-        "spa-keys": "spasdk/keys"
+        "spa-keys": "1.*.*"
     },
     "devDependencies": {
         "eslint": "3.*.*",
