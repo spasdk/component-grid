@@ -78,10 +78,16 @@ function Grid ( config ) {
     config = config || {};
 
     if ( DEVELOP ) {
-        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+        if ( typeof config !== 'object' ) {
+            throw new Error(__filename + ': wrong config type');
+        }
         // init parameters checks
-        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-        //if ( config.navigate  && typeof config.navigate  !== 'function' ) { throw new Error(__filename + ': wrong config.navigate type'); }
+        if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+            throw new Error(__filename + ': wrong or empty config.className');
+        }
+        // if ( config.navigate && typeof config.navigate !== 'function' ) {
+        //     throw new Error(__filename + ': wrong config.navigate type');
+        // }
     }
 
     /**
@@ -184,8 +190,12 @@ Grid.prototype.name = 'spa-component-grid';
  */
 Grid.prototype.renderItemDefault = function ( $item, data ) {
     if ( DEVELOP ) {
-        if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-        if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
+        if ( arguments.length !== 2 ) {
+            throw new Error(__filename + ': wrong arguments number');
+        }
+        if ( !($item instanceof Element) ) {
+            throw new Error(__filename + ': wrong $item type');
+        }
     }
 
     $item.innerText = data.value;
@@ -295,8 +305,12 @@ function normalize ( data ) {
     var idxY, idxX, item;
 
     if ( DEVELOP ) {
-        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-        if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
+        if ( arguments.length !== 1 ) {
+            throw new Error(__filename + ': wrong arguments number');
+        }
+        if ( !Array.isArray(data) ) {
+            throw new Error(__filename + ': wrong data type');
+        }
     }
 
     // rows
@@ -321,12 +335,24 @@ function normalize ( data ) {
             }
 
             if ( DEVELOP ) {
-                //if ( !('value' in item) ) { throw new Error(__filename + ': field "value" is missing'); }
-                if ( Number(item.colSpan) !== item.colSpan ) { throw new Error(__filename + ': item.colSpan must be a number'); }
-                if ( Number(item.rowSpan) !== item.rowSpan ) { throw new Error(__filename + ': item.rowSpan must be a number'); }
-                if ( item.colSpan <= 0 ) { throw new Error(__filename + ': item.colSpan should be positive'); }
-                if ( item.rowSpan <= 0 ) { throw new Error(__filename + ': item.rowSpan should be positive'); }
-                if ( ('focus' in item) && Boolean(item.focus) !== item.focus ) { throw new Error(__filename + ': item.focus must be boolean'); }
+                // if ( !('value' in item) ) {
+                //     throw new Error(__filename + ': field "value" is missing');
+                // }
+                if ( Number(item.colSpan) !== item.colSpan ) {
+                    throw new Error(__filename + ': item.colSpan must be a number');
+                }
+                if ( Number(item.rowSpan) !== item.rowSpan ) {
+                    throw new Error(__filename + ': item.rowSpan must be a number');
+                }
+                if ( item.colSpan <= 0 ) {
+                    throw new Error(__filename + ': item.colSpan should be positive');
+                }
+                if ( item.rowSpan <= 0 ) {
+                    throw new Error(__filename + ': item.rowSpan should be positive');
+                }
+                if ( ('focus' in item) && Boolean(item.focus) !== item.focus ) {
+                    throw new Error(__filename + ': item.focus must be boolean');
+                }
                 if ( ('disable' in item) && Boolean(item.disable) !== item.disable ) {
                     throw new Error(__filename + ': item.disable must be boolean');
                 }
@@ -352,8 +378,12 @@ function fill ( map, posX, posY, dX, dY, value ) {
     var idxY, idxX;
 
     if ( DEVELOP ) {
-        if ( arguments.length !== 6 ) { throw new Error(__filename + ': wrong arguments number'); }
-        if ( !Array.isArray(map) ) { throw new Error(__filename + ': wrong map type'); }
+        if ( arguments.length !== 6 ) {
+            throw new Error(__filename + ': wrong arguments number');
+        }
+        if ( !Array.isArray(map) ) {
+            throw new Error(__filename + ': wrong map type');
+        }
     }
 
     // rows
@@ -391,8 +421,12 @@ function map ( data ) {
         idxY, idxX, item;
 
     if ( DEVELOP ) {
-        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-        if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
+        if ( arguments.length !== 1 ) {
+            throw new Error(__filename + ': wrong arguments number');
+        }
+        if ( !Array.isArray(data) ) {
+            throw new Error(__filename + ': wrong data type');
+        }
     }
 
     // rows
@@ -562,12 +596,18 @@ Grid.prototype.init = function ( config ) {
         };
 
     if ( DEVELOP ) {
-        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+        if ( arguments.length !== 1 ) {
+            throw new Error(__filename + ': wrong arguments number');
+        }
+        if ( typeof config !== 'object' ) {
+            throw new Error(__filename + ': wrong config type');
+        }
         if ( config.data && (!Array.isArray(config.data) || !Array.isArray(config.data[0])) ) {
             throw new Error(__filename + ': wrong config.data type');
         }
-        if ( config.render && typeof config.render !== 'function' ) { throw new Error(__filename + ': wrong config.render type'); }
+        if ( config.render && typeof config.render !== 'function' ) {
+            throw new Error(__filename + ': wrong config.render type');
+        }
     }
 
     // apply cycle behaviour
@@ -581,7 +621,9 @@ Grid.prototype.init = function ( config ) {
 
     if ( config.provider ) {
         if ( DEVELOP ) {
-            if ( !config.sizeX || !config.sizeY ) {    throw new Error(__filename + ': wrong grid data size');    }
+            if ( !config.sizeX || !config.sizeY ) {
+                throw new Error(__filename + ': wrong grid data size');
+            }
         }
 
         this.provider = config.provider;
@@ -686,8 +728,12 @@ Grid.prototype.move = function ( direction ) {
         newData;
 
     if ( DEVELOP ) {
-        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-        if ( Number(direction) !== direction ) { throw new Error(__filename + ': direction must be a number'); }
+        if ( arguments.length !== 1 ) {
+            throw new Error(__filename + ': wrong arguments number');
+        }
+        if ( Number(direction) !== direction ) {
+            throw new Error(__filename + ': direction must be a number');
+        }
     }
 
     // shift till full stop
@@ -883,20 +929,28 @@ Grid.prototype.focusItem = function ( $item ) {
     var $prev = this.$focusItem;
 
     if ( DEVELOP ) {
-        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+        if ( arguments.length !== 1 ) {
+            throw new Error(__filename + ': wrong arguments number');
+        }
     }
 
     // different element
     if ( $item && $prev !== $item && $item.data.disable !== true ) {
         if ( DEVELOP ) {
-            if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
-            if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
+            if ( !($item instanceof Element) ) {
+                throw new Error(__filename + ': wrong $item type');
+            }
+            if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) {
+                throw new Error(__filename + ': wrong $item parent element');
+            }
         }
 
         // some item is focused already
         if ( $prev !== null ) {
             if ( DEVELOP ) {
-                if ( !($prev instanceof Element) ) { throw new Error(__filename + ': wrong $prev type'); }
+                if ( !($prev instanceof Element) ) {
+                    throw new Error(__filename + ': wrong $prev type');
+                }
             }
 
             // style
@@ -956,10 +1010,18 @@ Grid.prototype.focusItem = function ( $item ) {
  */
 Grid.prototype.markItem = function ( $item, state ) {
     if ( DEVELOP ) {
-        if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-        if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
-        if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
-        if ( Boolean(state) !== state ) { throw new Error(__filename + ': state must be boolean'); }
+        if ( arguments.length !== 2 ) {
+            throw new Error(__filename + ': wrong arguments number');
+        }
+        if ( !($item instanceof Element) ) {
+            throw new Error(__filename + ': wrong $item type');
+        }
+        if ( $item.parentNode.parentNode.parentNode.parentNode !== this.$body ) {
+            throw new Error(__filename + ': wrong $item parent element');
+        }
+        if ( Boolean(state) !== state ) {
+            throw new Error(__filename + ': state must be boolean');
+        }
     }
 
     // correct CSS
