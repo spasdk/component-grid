@@ -480,6 +480,16 @@ Grid.prototype.init = function ( config ) {
             }
         },
         /**
+         * Cell mouse hover handler.
+         *
+         * @this Element
+         */
+        onItemHover = function () {
+            if ( this.data.disable !== true ) {
+                self.focusItem(this);
+            }
+        },
+        /**
          * Construct grid when receive new data
          *
          * @param {Array} data to render
@@ -570,6 +580,10 @@ Grid.prototype.init = function ( config ) {
 
                     // manual focusing
                     $item.addEventListener('click', onItemClick);
+
+                    if ( self.hoverable ) {
+                        $item.addEventListener('mouseover', onItemHover);
+                    }
                 }
                 // row is ready
                 $tbody.appendChild($row);
