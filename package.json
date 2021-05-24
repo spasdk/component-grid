@@ -1,6 +1,6 @@
 {
     "name": "spa-component-grid",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Base grid/table implementation.",
     "author": {
         "name": "Stanislav Kalashnik",
